@@ -1,0 +1,1075 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>庫存管理系統</title>
+    
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#5D5CDE">
+    <meta name="description" content="專業的QR code庫存管理系統">
+    <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoi5bqr5a2Y566h55CG57O757WxIiwic2hvcnRfbmFtZSI6IuW6q+Wtmuezu+e1sSIsInN0YXJ0X3VybCI6Ii8iLCJkaXNwbGF5Ijoic3RhbmRhbG9uZSIsImJhY2tncm91bmRfY29sb3IiOiIjRkZGRkZGIiwidGhlbWVfY29sb3IiOiIjNUQ1Q0RFIiwiaWNvbnMiOlt7InNyYyI6ImRhdGE6aW1hZ2Uvc3ZnK3htbDtiYXNlNjQsUEhOMlp5QjNhV1IwYUQwaU16SWlJR2hsYVdkb2REMGlNeklpSUhabGNuTnBiMjQ5SWpFdU1TSWdlRzFzYm5NOUltaDBkSEE2THk5M2QzY3Vkek11YjNKbkx6SXdNREF2YzNabklqNDhjbVZqZENCM2FXUjBhRDBpTXpJaUlHaGxhV2RvZEQwaU16SWlJR1pwYkd3OUlpVTFSRFZEUkVVaUx6NDhkR1Y0ZENCNFBTSXhOaUlnZVQwaU1UUWlJR1pwYkd3OUlpTkdSa1pHUmtZaUlHWnZiblF0YzJsNlpUMGlNVEJqZUNJZ2RHVjRkQzFoYm1Ob2IzSTlJbTFwWkdSc1pTSStVVklnUTI5a1pUd3ZkR1Y0ZEQ0OEwzTjJaejRnIiwidHlwZSI6ImltYWdlL3N2Zyt4bWwiLCJzaXplcyI6IjMya3giLCJwdXJwb3NlIjoiYW55In0seyJzcmMiOiJkYXRhOmltYWdlL3N2Zyt4bWw7YmFzZTY0LFBITjJaeUIzYVdSMGFEMGlOVEV5SWlCb1pXbG5hSFE5SWpVeE1pSWdkbVZ5YzJsdmJqMGlNUzR4SWlCNGJXeHVjejBpYUhSMGNEb3ZMM2QzZHk1M015NXZjbWN2TWpBd01DOXpkbWNpUGp4eVpXTjBJSGRwWkhSb1BTSTFNVElpSUdobGFXZG9kRDBpTlRFeUlpQm1hV3hzUFNJbE5VUTFRMFJGU1NJdlBqeDBaWGgwSUhnOUlqSTFOaUlnZVQwaU1qVTFJaUJtYVd4c1BTSWpSa1pHUmtaR0lpQm1iMjUwTFhOcGVtVTlJak16WTNnaUlIUmxlSFF0WVc1amFHOXlQU0p0YVdSa2JHVWlQbEZTSUVOdlpHVThMM1JsZUhRK1BDOXpkbWMrIiwidHlwZSI6ImltYWdlL3N2Zyt4bWwiLCJzaXplcyI6IjUxMngiLCJwdXJwb3NlIjoiYW55In1dLCJzY29wZSI6Ii8iLCJsYW5nIjoidGgtVFciLCJkaXIiOiJsdHIiLCJjYXRlZ29yaWVzIjpbImJ1c2luZXNzIiwidG9vbHMiLCJwcm9kdWN0aXZpdHkiXX0=">
+    
+    <!-- Apple PWA Meta Tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="庫存管理">
+    <link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZlcnNpb249IjEuMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIGZpbGw9IiU1RDVDREUiLz48dGV4dCB4PSIxNiIgeT0iMTQiIGZpbGw9IiNGRkZGRkYiIGZvbnQtc2l6ZT0iMTBjeCIgdGV4dC1hbmNob3I9Im1pZGRsZSI+UVIgQ29kZTwvdGV4dD48L3N2Zz4g">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#5D5CDE',
+                        'light-bg': '#FFFFFF',
+                        'dark-bg': '#181818'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .scanner-frame {
+            position: relative;
+            width: 250px;
+            height: 250px;
+            border: 2px solid #5D5CDE;
+            border-radius: 12px;
+            margin: 0 auto;
+            background: linear-gradient(45deg, #f0f0f0 25%, transparent 25%), 
+                        linear-gradient(-45deg, #f0f0f0 25%, transparent 25%), 
+                        linear-gradient(45deg, transparent 75%, #f0f0f0 75%), 
+                        linear-gradient(-45deg, transparent 75%, #f0f0f0 75%);
+            background-size: 20px 20px;
+            background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+        }
+        
+        .dark .scanner-frame {
+            background: linear-gradient(45deg, #333 25%, transparent 25%), 
+                        linear-gradient(-45deg, #333 25%, transparent 25%), 
+                        linear-gradient(45deg, transparent 75%, #333 75%), 
+                        linear-gradient(-45deg, transparent 75%, #333 75%);
+            background-size: 20px 20px;
+            background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+        }
+        
+        .scanner-corners::before,
+        .scanner-corners::after {
+            content: '';
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            border: 3px solid #5D5CDE;
+        }
+        
+        .scanner-corners::before {
+            top: 10px;
+            left: 10px;
+            border-right: none;
+            border-bottom: none;
+        }
+        
+        .scanner-corners::after {
+            bottom: 10px;
+            right: 10px;
+            border-left: none;
+            border-top: none;
+        }
+        
+        .scan-line {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            right: 20px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #5D5CDE, transparent);
+            animation: scan 2s linear infinite;
+        }
+        
+        @keyframes scan {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(210px); }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.3s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="bg-light-bg dark:bg-dark-bg min-h-screen transition-colors duration-300">
+    <div class="container mx-auto px-4 py-6 max-w-4xl">
+        <!-- Header -->
+        <div class="text-center mb-8">
+            <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">庫存管理系統</h1>
+            <p class="text-gray-600 dark:text-gray-400">掃描QR code進行庫存記錄與清點</p>
+        </div>
+
+        <!-- Scanner Section -->
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 mb-6">
+            <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4 text-center">QR Code 掃描器</h2>
+            
+            <!-- Camera Scanner -->
+            <div id="cameraSection" class="text-center mb-4">
+                <div class="scanner-frame scanner-corners mx-auto mb-4 overflow-hidden">
+                    <video id="videoElement" autoplay playsinline class="w-full h-full object-cover rounded-lg" style="display: none;"></video>
+                    <canvas id="canvasElement" class="w-full h-full object-cover" style="display: none;"></canvas>
+                    <div id="scanAnimation" class="scan-line"></div>
+                </div>
+                
+                <div class="flex flex-col sm:flex-row gap-3 justify-center">
+                    <button 
+                        id="cameraBtn"
+                        onclick="toggleCamera()" 
+                        class="px-6 py-3 bg-green-500 hover:bg-green-600 text-white rounded-lg transition-colors font-medium"
+                    >
+                        📷 開啟攝像頭
+                    </button>
+                    <button 
+                        id="switchCameraBtn"
+                        onclick="switchCamera()" 
+                        class="px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors font-medium"
+                        style="display: none;"
+                    >
+                        🔄 切換攝像頭
+                    </button>
+                </div>
+                
+                <div id="cameraStatus" class="mt-3 text-sm text-gray-600 dark:text-gray-400">
+                    <p>📱 點擊「開啟攝像頭」開始掃描QR code</p>
+                </div>
+            </div>
+            
+            <!-- Manual Input -->
+            <div class="text-center space-y-4 border-t border-gray-200 dark:border-gray-700 pt-4">
+                <p class="text-sm text-gray-600 dark:text-gray-400">或手動輸入QR code內容</p>
+                <div class="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
+                    <input 
+                        type="text" 
+                        id="qrInput" 
+                        placeholder="輸入QR code內容..." 
+                        class="flex-1 px-4 py-3 text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    >
+                    <button 
+                        onclick="processManualQRCode()" 
+                        class="px-6 py-3 bg-primary text-white rounded-lg hover:bg-purple-600 transition-colors font-medium"
+                    >
+                        處理
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
+            <button 
+                onclick="showAddItemModal()" 
+                class="bg-green-500 hover:bg-green-600 text-white px-4 py-3 rounded-lg transition-colors font-medium"
+            >
+                ➕ 新增商品
+            </button>
+            <button 
+                onclick="startInventoryCheck()" 
+                class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-3 rounded-lg transition-colors font-medium"
+            >
+                📋 開始清點
+            </button>
+            <button 
+                onclick="exportInventory()" 
+                class="bg-purple-500 hover:bg-purple-600 text-white px-4 py-3 rounded-lg transition-colors font-medium"
+            >
+                📄 匯出CSV
+            </button>
+            <button 
+                onclick="saveData()" 
+                class="bg-orange-500 hover:bg-orange-600 text-white px-4 py-3 rounded-lg transition-colors font-medium"
+            >
+                💾 儲存資料
+            </button>
+        </div>
+
+        <!-- Data Management -->
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 mb-6">
+            <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">資料管理</h2>
+            <div class="flex flex-col sm:flex-row gap-3">
+                <input 
+                    type="file" 
+                    id="fileInput" 
+                    accept=".json"
+                    class="hidden"
+                    onchange="loadData()"
+                >
+                <button 
+                    onclick="document.getElementById('fileInput').click()" 
+                    class="flex-1 px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg transition-colors font-medium"
+                >
+                    📁 載入資料
+                </button>
+                <button 
+                    onclick="autoBackup()" 
+                    class="flex-1 px-4 py-2 bg-indigo-500 hover:bg-indigo-600 text-white rounded-lg transition-colors font-medium"
+                >
+                    🔄 自動備份: <span id="autoBackupStatus">關閉</span>
+                </button>
+                <button 
+                    onclick="clearAllData()" 
+                    class="flex-1 px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors font-medium"
+                >
+                    🗑️ 清空資料
+                </button>
+            </div>
+            <div class="mt-3 text-sm text-gray-600 dark:text-gray-400">
+                <p>💡 資料會以JSON檔案格式儲存，可以在不同裝置間同步使用</p>
+                <p id="lastSaved" class="text-xs mt-1"></p>
+            </div>
+        </div>
+
+        <!-- Inventory List -->
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg">
+            <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                    <h2 class="text-xl font-semibold text-gray-900 dark:text-white">庫存清單</h2>
+                    <div class="flex gap-3">
+                        <select 
+                            id="filterCategory" 
+                            onchange="filterInventory()" 
+                            class="px-3 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                        >
+                            <option value="">所有類別</option>
+                        </select>
+                        <input 
+                            type="text" 
+                            id="searchInput" 
+                            placeholder="搜尋商品..." 
+                            onkeyup="filterInventory()" 
+                            class="px-3 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                        >
+                    </div>
+                </div>
+            </div>
+            
+            <div id="inventoryList" class="p-6">
+                <div class="text-center text-gray-500 dark:text-gray-400 py-8">
+                    <p>尚無庫存資料</p>
+                    <p class="text-sm mt-2">請掃描QR code或新增商品開始管理庫存</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add/Edit Item Modal -->
+    <div id="itemModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center p-4 z-50">
+        <div class="bg-white dark:bg-gray-800 rounded-xl max-w-md w-full max-h-[90vh] overflow-y-auto">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 id="modalTitle" class="text-lg font-semibold text-gray-900 dark:text-white">新增商品</h3>
+                    <button onclick="closeModal()" class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">✕</button>
+                </div>
+                
+                <form id="itemForm" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">QR Code</label>
+                        <input type="text" id="itemQR" class="w-full px-3 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white" readonly>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">商品名稱 *</label>
+                        <input type="text" id="itemName" required class="w-full px-3 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">類別</label>
+                        <select id="itemCategory" class="w-full px-3 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
+                            <option value="電子產品">電子產品</option>
+                            <option value="服飾">服飾</option>
+                            <option value="食品">食品</option>
+                            <option value="日用品">日用品</option>
+                            <option value="其他">其他</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">數量 *</label>
+                        <input type="number" id="itemQuantity" required min="0" class="w-full px-3 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">單價</label>
+                        <input type="number" id="itemPrice" step="0.01" min="0" class="w-full px-3 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">備註</label>
+                        <textarea id="itemNotes" rows="3" class="w-full px-3 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"></textarea>
+                    </div>
+                    
+                    <div class="flex gap-3 pt-4">
+                        <button type="button" onclick="closeModal()" class="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                            取消
+                        </button>
+                        <button type="submit" class="flex-1 px-4 py-2 bg-primary text-white rounded-lg hover:bg-purple-600 transition-colors">
+                            儲存
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize dark mode
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            document.documentElement.classList.add('dark');
+        }
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
+            if (event.matches) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        });
+
+        // Global state
+        let inventory = [];
+        let currentEditingId = null;
+        let isInventoryCheck = false;
+        let autoBackupEnabled = false;
+        let autoBackupInterval = null;
+
+        // Process QR Code
+        function processQRCode() {
+            const qrCode = document.getElementById('qrInput').value.trim();
+            if (!qrCode) {
+                alert('請輸入QR code內容');
+                return;
+            }
+
+            const existingItem = inventory.find(item => item.qrCode === qrCode);
+            
+            if (existingItem) {
+                if (isInventoryCheck) {
+                    existingItem.checkCount = (existingItem.checkCount || 0) + 1;
+                    showNotification(`已記錄清點：${existingItem.name} (${existingItem.checkCount})`);
+                } else {
+                    showItemModal(existingItem);
+                }
+            } else {
+                showItemModal({ qrCode });
+            }
+            
+            document.getElementById('qrInput').value = '';
+            renderInventory();
+        }
+
+        // Show add/edit modal
+        function showAddItemModal() {
+            showItemModal({});
+        }
+
+        function showItemModal(item = {}) {
+            currentEditingId = item.id || null;
+            
+            document.getElementById('modalTitle').textContent = item.id ? '編輯商品' : '新增商品';
+            document.getElementById('itemQR').value = item.qrCode || '';
+            document.getElementById('itemName').value = item.name || '';
+            document.getElementById('itemCategory').value = item.category || '其他';
+            document.getElementById('itemQuantity').value = item.quantity || '';
+            document.getElementById('itemPrice').value = item.price || '';
+            document.getElementById('itemNotes').value = item.notes || '';
+            
+            document.getElementById('itemModal').classList.remove('hidden');
+            document.getElementById('itemModal').classList.add('flex');
+        }
+
+        function closeModal() {
+            document.getElementById('itemModal').classList.add('hidden');
+            document.getElementById('itemModal').classList.remove('flex');
+            currentEditingId = null;
+        }
+
+        // Handle form submission
+        document.getElementById('itemForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = {
+                qrCode: document.getElementById('itemQR').value || generateQRCode(),
+                name: document.getElementById('itemName').value,
+                category: document.getElementById('itemCategory').value,
+                quantity: parseInt(document.getElementById('itemQuantity').value) || 0,
+                price: parseFloat(document.getElementById('itemPrice').value) || 0,
+                notes: document.getElementById('itemNotes').value,
+                lastUpdated: new Date().toISOString()
+            };
+
+            if (currentEditingId) {
+                const index = inventory.findIndex(item => item.id === currentEditingId);
+                inventory[index] = { ...inventory[index], ...formData };
+                showNotification('商品已更新');
+            } else {
+                formData.id = Date.now().toString();
+                formData.checkCount = 0;
+                inventory.push(formData);
+                showNotification('商品已新增');
+            }
+
+            updateCategories();
+            renderInventory();
+            autoSaveOnChange();
+            closeModal();
+        });
+
+        // Generate random QR code
+        function generateQRCode() {
+            return 'QR' + Date.now().toString().slice(-8);
+        }
+
+        // Start inventory check
+        function startInventoryCheck() {
+            isInventoryCheck = !isInventoryCheck;
+            const button = event.target;
+            
+            if (isInventoryCheck) {
+                button.textContent = '🛑 結束清點';
+                button.classList.remove('bg-blue-500', 'hover:bg-blue-600');
+                button.classList.add('bg-red-500', 'hover:bg-red-600');
+                
+                // Reset check counts
+                inventory.forEach(item => item.checkCount = 0);
+                showNotification('清點模式已開始');
+            } else {
+                button.textContent = '📋 開始清點';
+                button.classList.remove('bg-red-500', 'hover:bg-red-600');
+                button.classList.add('bg-blue-500', 'hover:bg-blue-600');
+                showNotification('清點模式已結束');
+            }
+            
+            renderInventory();
+        }
+
+        // Export inventory
+        function exportInventory() {
+            const csvContent = generateCSV();
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `庫存清單_${new Date().toISOString().split('T')[0]}.csv`;
+            link.click();
+            showNotification('庫存已匯出');
+        }
+
+        function generateCSV() {
+            const headers = ['QR Code', '商品名稱', '類別', '數量', '單價', '總價值', '清點數量', '差異', '備註', '最後更新'];
+            const rows = inventory.map(item => [
+                item.qrCode,
+                item.name,
+                item.category,
+                item.quantity,
+                item.price,
+                (item.quantity * item.price).toFixed(2),
+                item.checkCount || 0,
+                (item.checkCount || 0) - item.quantity,
+                item.notes || '',
+                new Date(item.lastUpdated).toLocaleString('zh-TW')
+            ]);
+            
+            return [headers, ...rows].map(row => row.map(field => `"${field}"`).join(',')).join('\n');
+        }
+
+        // Filter inventory
+        function filterInventory() {
+            const category = document.getElementById('filterCategory').value;
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            
+            const filtered = inventory.filter(item => {
+                const matchesCategory = !category || item.category === category;
+                const matchesSearch = !search || 
+                    item.name.toLowerCase().includes(search) ||
+                    item.qrCode.toLowerCase().includes(search) ||
+                    (item.notes && item.notes.toLowerCase().includes(search));
+                
+                return matchesCategory && matchesSearch;
+            });
+            
+            renderFilteredInventory(filtered);
+        }
+
+        // Update category options
+        function updateCategories() {
+            const categories = [...new Set(inventory.map(item => item.category))];
+            const select = document.getElementById('filterCategory');
+            const currentValue = select.value;
+            
+            select.innerHTML = '<option value="">所有類別</option>';
+            categories.forEach(category => {
+                const option = document.createElement('option');
+                option.value = category;
+                option.textContent = category;
+                select.appendChild(option);
+            });
+            
+            select.value = currentValue;
+        }
+
+        // Render inventory
+        function renderInventory() {
+            renderFilteredInventory(inventory);
+        }
+
+        function renderFilteredInventory(items) {
+            const container = document.getElementById('inventoryList');
+            
+            if (items.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center text-gray-500 dark:text-gray-400 py-8">
+                        <p>沒有符合條件的商品</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const totalValue = items.reduce((sum, item) => sum + (item.quantity * item.price), 0);
+            
+            container.innerHTML = `
+                <div class="mb-4 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm">
+                        <div>
+                            <span class="font-medium text-gray-600 dark:text-gray-400">商品總數:</span>
+                            <span class="text-lg font-bold text-gray-900 dark:text-white ml-2">${items.length}</span>
+                        </div>
+                        <div>
+                            <span class="font-medium text-gray-600 dark:text-gray-400">總庫存量:</span>
+                            <span class="text-lg font-bold text-gray-900 dark:text-white ml-2">${items.reduce((sum, item) => sum + item.quantity, 0)}</span>
+                        </div>
+                        <div>
+                            <span class="font-medium text-gray-600 dark:text-gray-400">總價值:</span>
+                            <span class="text-lg font-bold text-green-600 dark:text-green-400 ml-2">$${totalValue.toFixed(2)}</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="space-y-3">
+                    ${items.map(item => createItemCard(item)).join('')}
+                </div>
+            `;
+        }
+
+        function createItemCard(item) {
+            const stockStatus = item.quantity <= 5 ? 'text-red-600 dark:text-red-400' : 'text-green-600 dark:text-green-400';
+            const checkDiff = (item.checkCount || 0) - item.quantity;
+            const checkStatus = checkDiff === 0 ? 'text-green-600' : checkDiff > 0 ? 'text-blue-600' : 'text-red-600';
+            
+            return `
+                <div class="border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:shadow-md transition-shadow fade-in">
+                    <div class="flex flex-col sm:flex-row justify-between items-start gap-4">
+                        <div class="flex-1">
+                            <div class="flex flex-wrap items-center gap-2 mb-2">
+                                <h3 class="font-semibold text-gray-900 dark:text-white">${item.name}</h3>
+                                <span class="px-2 py-1 text-xs bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded-full">${item.category}</span>
+                                ${item.quantity <= 5 ? '<span class="px-2 py-1 text-xs bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200 rounded-full">庫存不足</span>' : ''}
+                            </div>
+                            <div class="text-sm text-gray-600 dark:text-gray-400 space-y-1">
+                                <div>QR: <span class="font-mono">${item.qrCode}</span></div>
+                                <div>庫存: <span class="${stockStatus} font-medium">${item.quantity}</span> | 單價: $${item.price.toFixed(2)} | 總值: $${(item.quantity * item.price).toFixed(2)}</div>
+                                ${isInventoryCheck ? `<div>清點: <span class="${checkStatus} font-medium">${item.checkCount || 0}</span> (差異: ${checkDiff > 0 ? '+' : ''}${checkDiff})</div>` : ''}
+                                ${item.notes ? `<div>備註: ${item.notes}</div>` : ''}
+                                <div class="text-xs">最後更新: ${new Date(item.lastUpdated).toLocaleString('zh-TW')}</div>
+                            </div>
+                        </div>
+                        <div class="flex gap-2">
+                            <button onclick="adjustQuantity('${item.id}', -1)" class="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition-colors text-sm">-</button>
+                            <button onclick="adjustQuantity('${item.id}', 1)" class="px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600 transition-colors text-sm">+</button>
+                            <button onclick="showItemModal(${JSON.stringify(item).replace(/"/g, '&quot;')})" class="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors text-sm">編輯</button>
+                            <button onclick="deleteItem('${item.id}')" class="px-3 py-1 bg-gray-500 text-white rounded hover:bg-gray-600 transition-colors text-sm">刪除</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Adjust quantity
+        function adjustQuantity(id, change) {
+            const item = inventory.find(item => item.id === id);
+            if (item) {
+                item.quantity = Math.max(0, item.quantity + change);
+                item.lastUpdated = new Date().toISOString();
+                renderInventory();
+                showNotification(`${item.name} 數量已${change > 0 ? '增加' : '減少'}`);
+            }
+        }
+
+        // Delete item
+        function deleteItem(id) {
+            if (confirm('確定要刪除此商品嗎？')) {
+                const index = inventory.findIndex(item => item.id === id);
+                if (index > -1) {
+                    const item = inventory[index];
+                    inventory.splice(index, 1);
+                    updateCategories();
+                    renderInventory();
+                    showNotification(`${item.name} 已刪除`);
+                }
+            }
+        }
+
+        // Show notification
+        function showNotification(message) {
+            const notification = document.createElement('div');
+            notification.className = 'fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-50 fade-in';
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+
+        // Camera and QR Code Functions
+        let stream = null;
+        let scanning = false;
+        let currentFacingMode = 'environment';
+        let cameras = [];
+
+        // Manual QR Code processing
+        function processManualQRCode() {
+            const qrCode = document.getElementById('qrInput').value.trim();
+            if (!qrCode) {
+                showErrorNotification('請輸入QR code內容');
+                return;
+            }
+            processQRResult(qrCode);
+            document.getElementById('qrInput').value = '';
+        }
+
+        // Process QR code result (from camera or manual input)
+        function processQRResult(qrCode) {
+            const existingItem = inventory.find(item => item.qrCode === qrCode);
+            
+            if (existingItem) {
+                if (isInventoryCheck) {
+                    existingItem.checkCount = (existingItem.checkCount || 0) + 1;
+                    showNotification(`✅ 已記錄清點：${existingItem.name} (${existingItem.checkCount})`);
+                    // 在清點模式下播放音效回饋（如果需要）
+                    playBeepSound();
+                } else {
+                    stopCamera(); // 停止攝像頭
+                    showItemModal(existingItem);
+                }
+            } else {
+                stopCamera(); // 停止攝像頭
+                showItemModal({ qrCode });
+            }
+            
+            renderInventory();
+        }
+
+        // Toggle camera on/off
+        async function toggleCamera() {
+            if (stream) {
+                stopCamera();
+            } else {
+                await startCamera();
+            }
+        }
+
+        // Start camera
+        async function startCamera() {
+            try {
+                updateCameraStatus('正在啟動攝像頭...', 'info');
+                
+                // Get available cameras
+                const devices = await navigator.mediaDevices.enumerateDevices();
+                cameras = devices.filter(device => device.kind === 'videoinput');
+                
+                if (cameras.length === 0) {
+                    throw new Error('未找到可用的攝像頭');
+                }
+
+                const constraints = {
+                    video: {
+                        facingMode: currentFacingMode,
+                        width: { ideal: 640 },
+                        height: { ideal: 480 }
+                    }
+                };
+
+                stream = await navigator.mediaDevices.getUserMedia(constraints);
+                const video = document.getElementById('videoElement');
+                const canvas = document.getElementById('canvasElement');
+                
+                video.srcObject = stream;
+                video.style.display = 'block';
+                canvas.style.display = 'none';
+                document.getElementById('scanAnimation').style.display = 'block';
+                
+                // Update UI
+                document.getElementById('cameraBtn').textContent = '📷 關閉攝像頭';
+                document.getElementById('cameraBtn').classList.remove('bg-green-500', 'hover:bg-green-600');
+                document.getElementById('cameraBtn').classList.add('bg-red-500', 'hover:bg-red-600');
+                
+                if (cameras.length > 1) {
+                    document.getElementById('switchCameraBtn').style.display = 'block';
+                }
+                
+                updateCameraStatus('攝像頭已啟動，正在掃描QR code...', 'success');
+                
+                // Start scanning
+                scanning = true;
+                scanQRCode();
+                
+            } catch (error) {
+                console.error('攝像頭啟動失敗:', error);
+                updateCameraStatus(`攝像頭啟動失敗：${error.message}`, 'error');
+                
+                if (error.name === 'NotAllowedError') {
+                    updateCameraStatus('請允許網站使用攝像頭權限', 'error');
+                } else if (error.name === 'NotFoundError') {
+                    updateCameraStatus('未找到攝像頭設備', 'error');
+                } else {
+                    updateCameraStatus('攝像頭不可用，請使用手動輸入', 'warning');
+                }
+            }
+        }
+
+        // Stop camera
+        function stopCamera() {
+            scanning = false;
+            
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+                stream = null;
+            }
+            
+            const video = document.getElementById('videoElement');
+            video.style.display = 'none';
+            document.getElementById('canvasElement').style.display = 'none';
+            document.getElementById('scanAnimation').style.display = 'block';
+            
+            document.getElementById('cameraBtn').textContent = '📷 開啟攝像頭';
+            document.getElementById('cameraBtn').classList.remove('bg-red-500', 'hover:bg-red-600');
+            document.getElementById('cameraBtn').classList.add('bg-green-500', 'hover:bg-green-600');
+            document.getElementById('switchCameraBtn').style.display = 'none';
+            
+            updateCameraStatus('攝像頭已關閉', 'info');
+        }
+
+        // Switch camera (front/back)
+        async function switchCamera() {
+            if (cameras.length <= 1) return;
+            
+            currentFacingMode = currentFacingMode === 'environment' ? 'user' : 'environment';
+            
+            if (stream) {
+                stopCamera();
+                await startCamera();
+            }
+        }
+
+        // Scan QR code from video
+        function scanQRCode() {
+            if (!scanning || !stream) return;
+            
+            const video = document.getElementById('videoElement');
+            const canvas = document.getElementById('canvasElement');
+            const context = canvas.getContext('2d');
+            
+            if (video.readyState === video.HAVE_ENOUGH_DATA) {
+                canvas.height = video.videoHeight;
+                canvas.width = video.videoWidth;
+                context.drawImage(video, 0, 0, canvas.width, canvas.height);
+                
+                const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+                const code = jsQR(imageData.data, imageData.width, imageData.height);
+                
+                if (code) {
+                    // QR code detected
+                    scanning = false;
+                    updateCameraStatus(`✅ QR code 掃描成功：${code.data}`, 'success');
+                    processQRResult(code.data);
+                    
+                    // 短暫顯示掃描成功效果
+                    canvas.style.display = 'block';
+                    video.style.display = 'none';
+                    document.getElementById('scanAnimation').style.display = 'none';
+                    
+                    // 繪制掃描框
+                    drawQRBounds(context, code.location);
+                    
+                    // 1秒後恢復掃描或關閉攝像頭
+                    setTimeout(() => {
+                        if (isInventoryCheck) {
+                            // 清點模式下繼續掃描
+                            video.style.display = 'block';
+                            canvas.style.display = 'none';
+                            document.getElementById('scanAnimation').style.display = 'block';
+                            scanning = true;
+                            scanQRCode();
+                        } else {
+                            // 非清點模式下關閉攝像頭
+                            stopCamera();
+                        }
+                    }, 1000);
+                    
+                    return;
+                }
+            }
+            
+            // Continue scanning
+            if (scanning) {
+                requestAnimationFrame(scanQRCode);
+            }
+        }
+
+        // Draw QR code bounds
+        function drawQRBounds(context, location) {
+            context.strokeStyle = '#5D5CDE';
+            context.lineWidth = 4;
+            context.beginPath();
+            context.moveTo(location.topLeftCorner.x, location.topLeftCorner.y);
+            context.lineTo(location.topRightCorner.x, location.topRightCorner.y);
+            context.lineTo(location.bottomRightCorner.x, location.bottomRightCorner.y);
+            context.lineTo(location.bottomLeftCorner.x, location.bottomLeftCorner.y);
+            context.closePath();
+            context.stroke();
+        }
+
+        // Update camera status
+        function updateCameraStatus(message, type = 'info') {
+            const statusElement = document.getElementById('cameraStatus');
+            const colors = {
+                success: 'text-green-600 dark:text-green-400',
+                error: 'text-red-600 dark:text-red-400',
+                warning: 'text-yellow-600 dark:text-yellow-400',
+                info: 'text-gray-600 dark:text-gray-400'
+            };
+            
+            statusElement.innerHTML = `<p class="${colors[type]}">${message}</p>`;
+        }
+
+        // Play beep sound for successful scan
+        function playBeepSound() {
+            try {
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                oscillator.frequency.value = 800;
+                oscillator.type = 'square';
+                
+                gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+                
+                oscillator.start(audioContext.currentTime);
+                oscillator.stop(audioContext.currentTime + 0.1);
+            } catch (error) {
+                // 如果音頻不可用，靜默失敗
+                console.log('Audio not available');
+            }
+        }
+
+        // Handle Enter key in QR input
+        document.getElementById('qrInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                processManualQRCode();
+            }
+        });
+
+        // Clean up camera when page unloads
+        window.addEventListener('beforeunload', function() {
+            if (stream) {
+                stopCamera();
+            }
+        });
+
+        // Data Storage Functions
+        function saveData() {
+            const dataToSave = {
+                version: '1.0',
+                timestamp: new Date().toISOString(),
+                inventory: inventory,
+                metadata: {
+                    totalItems: inventory.length,
+                    categories: [...new Set(inventory.map(item => item.category))],
+                    lastModified: new Date().toISOString()
+                }
+            };
+
+            const dataStr = JSON.stringify(dataToSave, null, 2);
+            const blob = new Blob([dataStr], { type: 'application/json' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `庫存資料_${new Date().toISOString().split('T')[0]}.json`;
+            link.click();
+            
+            updateLastSavedTime();
+            showNotification('資料已儲存');
+        }
+
+        function loadData() {
+            const fileInput = document.getElementById('fileInput');
+            const file = fileInput.files[0];
+            
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    
+                    if (data.inventory && Array.isArray(data.inventory)) {
+                        if (inventory.length > 0) {
+                            if (confirm('載入新資料會覆蓋現有資料，確定要繼續嗎？')) {
+                                inventory = data.inventory;
+                                updateCategories();
+                                renderInventory();
+                                updateLastSavedTime(data.timestamp);
+                                showNotification(`成功載入 ${inventory.length} 項商品`);
+                            }
+                        } else {
+                            inventory = data.inventory;
+                            updateCategories();
+                            renderInventory();
+                            updateLastSavedTime(data.timestamp);
+                            showNotification(`成功載入 ${inventory.length} 項商品`);
+                        }
+                    } else {
+                        showErrorNotification('檔案格式不正確');
+                    }
+                } catch (error) {
+                    showErrorNotification('檔案讀取失敗：' + error.message);
+                }
+            };
+            reader.readAsText(file);
+            
+            // Reset file input
+            fileInput.value = '';
+        }
+
+        function autoBackup() {
+            autoBackupEnabled = !autoBackupEnabled;
+            const statusSpan = document.getElementById('autoBackupStatus');
+            
+            if (autoBackupEnabled) {
+                statusSpan.textContent = '開啟';
+                statusSpan.parentElement.classList.remove('bg-indigo-500', 'hover:bg-indigo-600');
+                statusSpan.parentElement.classList.add('bg-green-500', 'hover:bg-green-600');
+                
+                // 每5分鐘自動備份一次
+                autoBackupInterval = setInterval(() => {
+                    if (inventory.length > 0) {
+                        saveData();
+                        showNotification('自動備份完成');
+                    }
+                }, 5 * 60 * 1000);
+                
+                showNotification('自動備份已開啟（每5分鐘）');
+            } else {
+                statusSpan.textContent = '關閉';
+                statusSpan.parentElement.classList.remove('bg-green-500', 'hover:bg-green-600');
+                statusSpan.parentElement.classList.add('bg-indigo-500', 'hover:bg-indigo-600');
+                
+                if (autoBackupInterval) {
+                    clearInterval(autoBackupInterval);
+                    autoBackupInterval = null;
+                }
+                
+                showNotification('自動備份已關閉');
+            }
+        }
+
+        function clearAllData() {
+            if (confirm('確定要清空所有庫存資料嗎？此操作無法復原！')) {
+                if (confirm('請再次確認：這會刪除所有商品資料！')) {
+                    inventory = [];
+                    updateCategories();
+                    renderInventory();
+                    updateLastSavedTime();
+                    showNotification('所有資料已清空');
+                }
+            }
+        }
+
+        function updateLastSavedTime(timestamp = null) {
+            const lastSavedElement = document.getElementById('lastSaved');
+            if (timestamp) {
+                lastSavedElement.textContent = `最後儲存: ${new Date(timestamp).toLocaleString('zh-TW')}`;
+            } else if (inventory.length > 0) {
+                lastSavedElement.textContent = `最後儲存: ${new Date().toLocaleString('zh-TW')}`;
+            } else {
+                lastSavedElement.textContent = '';
+            }
+        }
+
+        function showErrorNotification(message) {
+            const notification = document.createElement('div');
+            notification.className = 'fixed top-4 right-4 bg-red-500 text-white px-4 py-2 rounded-lg shadow-lg z-50 fade-in';
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 5000);
+        }
+
+        // Enhanced notification for data operations
+        function enhancedNotification(message, type = 'success') {
+            const colors = {
+                success: 'bg-green-500',
+                error: 'bg-red-500',
+                warning: 'bg-yellow-500',
+                info: 'bg-blue-500'
+            };
+            
+            const notification = document.createElement('div');
+            notification.className = `fixed top-4 right-4 ${colors[type]} text-white px-4 py-2 rounded-lg shadow-lg z-50 fade-in`;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, type === 'error' ? 5000 : 3000);
+        }
+
+        // Auto-save on data changes
+        function autoSaveOnChange() {
+            if (autoBackupEnabled && inventory.length > 0) {
+                // 延遲1秒後自動保存，避免頻繁操作
+                setTimeout(() => {
+                    updateLastSavedTime();
+                }, 1000);
+            }
+        }
+
+        // Override existing functions to include auto-save
+        const originalProcessQRCode = processQRCode;
+        processQRCode = function() {
+            originalProcessQRCode();
+            autoSaveOnChange();
+        };
+
+        const originalAdjustQuantity = adjustQuantity;
+        adjustQuantity = function(id, change) {
+            originalAdjustQuantity(id, change);
+            autoSaveOnChange();
+        };
+
+        const originalDeleteItem = deleteItem;
+        deleteItem = function(id) {
+            originalDeleteItem(id);
+            autoSaveOnChange();
+        };
+
+        // Initialize
+        renderInventory();
+        updateLastSavedTime();
+    </script>
+</body>
+</html>
